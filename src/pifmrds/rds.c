@@ -132,8 +132,20 @@ void get_rds_group(int *buffer) {
             blocks[3] = rds_params.ps[ps_state*2]<<8 | rds_params.ps[ps_state*2+1];
             ps_state++;
             if(ps_state >= 4) ps_state = 0;
-        } else { // state == 5
+        } else if(state == 5) { // state == 5
             blocks[1] = 0x2400 | rt_state;
+            blocks[2] = rds_params.rt[rt_state*4+0]<<8 | rds_params.rt[rt_state*4+1];
+            blocks[3] = rds_params.rt[rt_state*4+2]<<8 | rds_params.rt[rt_state*4+3];
+            rt_state++;
+            if(rt_state >= 16) rt_state = 0;
+        } else if(state == 6) {
+            blocks[1] = 0x3400 | rt_state;
+            blocks[2] = rds_params.rt[rt_state*4+0]<<8 | rds_params.rt[rt_state*4+1];
+            blocks[3] = rds_params.rt[rt_state*4+2]<<8 | rds_params.rt[rt_state*4+3];
+            rt_state++;
+            if(rt_state >= 16) rt_state = 0;
+        } else {
+            blocks[1] = 0x8400 | rt_state;
             blocks[2] = rds_params.rt[rt_state*4+0]<<8 | rds_params.rt[rt_state*4+1];
             blocks[3] = rds_params.rt[rt_state*4+2]<<8 | rds_params.rt[rt_state*4+3];
             rt_state++;
@@ -141,7 +153,7 @@ void get_rds_group(int *buffer) {
         }
     
         state++;
-        if(state >= 5) state = 0;
+        if(state >= 7) state = 0;
     }
     
     // Calculate the checkword for each block and emit the bits
